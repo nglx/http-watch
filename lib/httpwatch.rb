@@ -1,21 +1,13 @@
-# A HttpWatch proxy clone (without the license!)
 require 'rubygems'
 require 'webrick/httpproxy'
-
-begin
- require 'Win32/Console/ANSI' if PLATFORM =~ /win32/
- require 'highline/import'    if PLATFORM =~ /darwin/
-rescue LoadError
- raise 'You must gem install win32console or highline to use color on Windows/OSX'
-end
 
 @proxy_port    = ARGV[0] || 9090
 @search_body   = ARGV[1]
 
 # Optional flags
-@print_headers  = false
+@print_headers  = true
 @print_body     = true
-@pretty_colours = true
+@pretty_colours = false
 
 server = WEBrick::HTTPProxyServer.new(
     :Port => @proxy_port,
