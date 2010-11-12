@@ -7,7 +7,6 @@ require 'webrick/httpproxy'
 # Optional flags
 @print_headers  = true
 @print_body     = true
-@pretty_colours = false
 
 server = WEBrick::HTTPProxyServer.new(
     :Port => @proxy_port,
@@ -30,9 +29,7 @@ server = WEBrick::HTTPProxyServer.new(
             line_no = 1
             body.each do |line|
               if line.to_s =~ /#{@search_body}/ then
-                puts "\n<<< #{line_no} #{line.gsub(/#{@search_body}/,
-                  "\e[32m#{@search_body}\e[0m")}" if   @pretty_colours
-                puts "\n<<< #{line_no} #{line}" unless @pretty_colours
+                puts "\n<<< #{line_no} #{line}"
               end
               line_no += 1
             end
