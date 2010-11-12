@@ -1,0 +1,2 @@
+=HttpWatch
+Initial version based on http://90kts.com/2008/httpwatch-a-free-alternative-using-ruby/
