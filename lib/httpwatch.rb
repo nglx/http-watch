@@ -5,35 +5,25 @@ require 'webrick/httpproxy'
 @search_body   = ARGV[1]
 
 # Optional flags
-@print_headers  = true
-@print_body     = true
+
+def upstream_proxy
+  if prx = ENV["http_proxy"]
+    URI.parse(prx)
+  end
+end
 
 server = WEBrick::HTTPProxyServer.new(
     :Port => @proxy_port,
     :AccessLog => [], # suppress standard messages
-
+    :ProxyURI => upstream_proxy,
     :ProxyContentHandler => Proc.new do |req,res|
-        puts "-"*75
-        puts ">>> #{req.request_line.chomp}\n"
-        req.header.keys.each do |k|
-            puts "#{k.capitalize}: #{req.header[k]}" if @print_headers
+
+        if not res.content_type.nil? and res.content_type.start_with? 'text/html'
+          puts ">>> #{req.request_line.chomp}"
+        #else
+        #  puts "Ignoring content type #{res.inspect}" rescue nil
         end
 
-        puts "<<<" if @print_headers
-        puts res.status_line if @print_headers
-        res.header.keys.each do |k|
-            puts "#{k.capitalize}: #{res.header[k]}" if @print_headers
-        end
-        unless res.body.nil? or !@print_body then
-            body = res.body.split("\n")
-            line_no = 1
-            body.each do |line|
-              if line.to_s =~ /#{@search_body}/ then
-                puts "\n<<< #{line_no} #{line}"
-              end
-              line_no += 1
-            end
-        end
     end
 )
 trap("INT") { server.shutdown }
